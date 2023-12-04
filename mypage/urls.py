@@ -6,6 +6,7 @@ app_name = 'mypage'
 urlpatterns = [
     path('', views.main, name='main'),
     path('login/', views.login_view, name='login'),
+    path('signup/', views.signup, name='signup'),  
     path('logout/', views.logout_view, name='logout'),
     path('write/', views.post_write, name='write'),
     path('about/', views.about, name="about"),

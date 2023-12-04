@@ -37,8 +37,8 @@
     </div>
   </div>
 
-  <!-- 수정 / 삭제 버튼 -->
-  {% if user.is_active %}
+  <!-- 작성자 또는 관리자/스태프에게만 수정/삭제 버튼 보이기 -->
+  {% if request.user == post.author or request.user.is_staff or request.user.is_superuser %}
   <div class="button-box">
     <a href="/modify/{{post.id}}" class="modify">
       <i class="fa-solid fa-file-pen"></i>

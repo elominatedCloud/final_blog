@@ -34,7 +34,7 @@
         카테고리 목록
       </div>
       <!-- 로그인이 되어있을 경우 카테고리 추가/삭제 페이지로 갈 수 있는 버튼 추가 -->
-      {% if user.is_active %}
+      {% if request.user.is_staff or request.user.is_superuser %}
       <a href="/option/" class="cate-add" style="font-size:15px">
         <i class="fa-solid fa-gear"></i>
       </a>
