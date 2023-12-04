@@ -1,86 +1,101 @@
-{% extends "./base.html" %}{% load static %}
+{% extends "./base.html" %}
+{% load static %}
 {% block index %}
-  <!-- static 폴더내에 존재하는 index.css 파일 사용 -->
-  <link rel="stylesheet" href="{% static 'css/index.css' %}"/>
+<!-- static 폴더내에 존재하는 index.css 파일 사용 -->
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
 
-  <!-- 글쓰기 버튼 공간 -->
-  <div class="write-box">
-    {% if user.is_active %}
-      <button onclick="location.href='/write/';" class="write-button">
-        글쓰기
-      </button>
-    {% endif %}
+<!-- 글쓰기 버튼 공간 -->
+<div class="write-box">
+  {% if user.is_active %}
+  <button onclick="location.href='/write/';" class="write-button">
+    글쓰기
+  </button>
+  {% endif %}
+</div>
+
+<!-- 프로필 사진 / 카테고리 목록 / 게시글 목록 공간 -->
+<div class="middle">
+  <div class="sidebar">
+    <!-- 프로필 사진 및 이름 -->
+    <div class="profile">
+      <div class="profile-img">
+        <img src="{% static 'image/profile.png' %}" />
+      </div>
+      <div class="profile-text">
+        <p class="team-title">웹프로그래밍</p>
+        <p class="team-semititle">9조</p>
+      </div>
+    </div>
+
+    <!-- 카테고리 목록 -->
+    <div class="cate-title">
+      <div>
+        <i class="fa-solid fa-bars-staggered"></i>
+        카테고리 목록
+      </div>
+      <!-- 로그인이 되어있을 경우 카테고리 추가/삭제 페이지로 갈 수 있는 버튼 추가 -->
+      {% if user.is_active %}
+      <a href="/option/" class="cate-add" style="font-size:15px">
+        <i class="fa-solid fa-gear"></i>
+      </a>
+      {% endif %}
+    </div>
+    <div onclick="location.href='/';" class="category-box">
+      <div style="padding-left:20px">전체보기</div>
+      <div class="category-count">
+        (
+        {{ all_post }}
+        )</div>
+    </div>
+    {% for category in categorys %}
+    <div onclick="location.href='/category/{{ category.cate_name | lower}}/';" class="category-box">
+      <div style="padding-left:20px">{{ category.cate_name }}</div>
+      <div class="category-count">
+        (
+        {{ category.post_count }}
+        )</div>
+    </div>
+    {% endfor %}
   </div>
 
-  <!-- 프로필 사진 / 카테고리 목록 / 게시글 목록 공간 -->
-  <div class="middle">
-    <div class="sidebar">
-      <!-- 프로필 사진 및 이름 -->
-      <div class="profile">
-        <div class="profile-img">
-          <img src="{% static 'image/profile.png' %}"/>
-        </div>
-        <div class="profile-text">
-          <p class="team-title">웹프로그래밍</p>
-          <p class="team-semititle">9조</p>
-        </div>
-      </div>
-
-      <!-- 카테고리 목록 -->
-      <div class="cate-title">
-        <div>
-          <i class="fa-solid fa-bars-staggered"></i>
-          카테고리 목록</div>
-        <!-- 로그인이 되어있을 경우 카테고리 추가/삭제 페이지로 갈 수 있는 버튼 추가 -->
-        {% if user.is_active %}
-          <a href="/option/" class="cate-add" style="font-size:15px">
-            <i class="fa-solid fa-gear"></i>
-          </a>
-        {% endif %}
-      </div>
-      <div onclick="location.href='/';" class="category-box">
-        <div style="padding-left:20px">전체보기</div>
-        <div class="category-count">
-          (
-          {{ all_post }}
-          )</div>
-      </div>
-      {% for category in categorys %}
-        <div onclick="location.href='/category/{{ category.cate_name | lower}}/';" class="category-box">
-          <div style="padding-left:20px">{{ category.cate_name }}</div>
-          <div class="category-count">
-            (
-            {{ category.post_count }}
-            )</div>
-        </div>
-      {% endfor %}
-    </div>
-
-    <!-- 게시글 박스 -->
-    <div class="content">
-      {% for post in posts %}
-        <div onclick="location.href='/posts/{{ post.id }}/';" class="post-box">
-          <div class="content-text">
-            <p class="content-title">{{ post.p_title }}</p>
-            <div class="sub-detail">
-              <p>
-                <i class="fa-solid fa-bookmark"></i>
-                {{ post.category_title }}</p>
-              <p>
-                <i class="fa-regular fa-calendar"></i>
-                {{ post.p_created | date:'Y.m.d'}}</p>
-              <p>
-                <i class="fa-regular fa-comment-dots"></i>
-                댓글
-                {{post.comments_count }}건</p>
-            </div>
-            <p class="content-description">{{ post.p_desc }}</p>
-          </div>
-          {% if post.thumbnail %}
-            <img src="{{ post.thumbnail.url }}" alt=""/>
+  <!-- 게시글 박스 -->
+  <div class="content">
+    {% for post in posts %}
+    <div onclick="location.href='/posts/{{ post.id }}/';" class="post-box">
+      <div class="content-text">
+        <p class="content-title">
+        {{ post.p_title }}
+        {% if post.p_updated %}
+          {% if post.p_updated|date:"Y-m-d" == current_time|date:"Y-m-d" %}
+          <i class="fa-solid fa-n fa-xs" style="color: #ff4d00; margin-left: 5px; margin-right: 5px;"></i>
           {% endif %}
+        {% elif post.p_created|date:"Y-m-d" == current_time|date:"Y-m-d" %}
+        <i class="fa-solid fa-n fa-xs" style="color: #ff4d00; margin-left: 5px; margin-right: 5px;"></i>
+        {% endif %}
+
+        </p>
+        <div class="sub-detail">
+          <p>
+            <i class="fa-solid fa-bookmark"></i>
+            {{ post.category_title }}
+          </p>
+          <p>
+            <i class="fa-regular fa-calendar"></i>
+            {{ post.p_created | date:'Y.m.d'}}
+          </p>
+          <p>
+            <i class="fa-regular fa-comment-dots"></i>
+            댓글
+            {{post.comments_count }}건
+          </p>
         </div>
-        {% endfor%}
+        <p class="content-description">{{ post.p_desc }}</p>
       </div>
+      {% if post.thumbnail %}
+      <img src="{{ post.thumbnail.url }}" alt="" />
+      {% endif %}
     </div>
-  {% endblock %}
+    {% endfor%}
+  </div>
+</div>
+{% endblock %}

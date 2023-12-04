@@ -13,11 +13,12 @@ class Category(models.Model):
 
 class Post(models.Model):
     cate = models.ForeignKey(Category, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     p_title = models.CharField(max_length=50)
     p_desc = models.CharField(max_length=100)
     p_contents = models.TextField()
     p_created = models.DateTimeField(auto_now_add=True, null=True)
-    p_updated = models.DateTimeField(auto_now=True, null=True)
+    p_updated = models.DateTimeField(default=None, null=True)
     thumbnail = models.ImageField(upload_to="post", blank=True)
 
     def __str__(self):
@@ -25,6 +26,7 @@ class Post(models.Model):
 
 class Comments(models.Model):
     p = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     c_user_id = models.CharField(max_length=20)
     c_user_pw = models.CharField(max_length=20)
     c_contents = models.TextField()
