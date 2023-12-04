@@ -17,13 +17,15 @@ def main(request):
     # posts에 comments_count 변수명으로 comment의 개수 정보 추가 + 역순으로 출력시켜 최신순으로 보이도록 함
     # category_title에 외래키 정보인 category 테이블의 cate_name 정보를 category_title에 입력시켜 줌
     posts = Post.objects.annotate(comments_count=Count('comments'), category_title=F('cate__cate_name')).order_by('-id')
-    
+    # 현재 시간 반환
+    current_time = timezone.now()
+
     # 전체 포스트의 개수를 세기 위한 all_post 변수
     all_post = 0
     for category in categorys:
         all_post += category.post_count
     
-    context = {'categorys': categorys, 'posts' : posts, 'all_post' : all_post}
+    context = {'categorys': categorys, 'posts' : posts, 'current_time': current_time, 'all_post' : all_post}
     return render(request, 'mypage/index.html', context)
 
 # category.html / 카테고리 선택 페이지
@@ -123,8 +125,8 @@ def post_write(request):
             p_desc = description,
             p_contents = content,
             p_created = timezone.now(),
-            p_updated = timezone.now(),
-            thumbnail = thumbnail
+            thumbnail = thumbnail,
+            author=request.user  # 현재 로그인한 사용자를 작성자로 설정 # 추가된 부분
         )
         # redirect를 통해 게시글 작성을 완료하면 해당 post 상세페이지로 이동
         return redirect(f"/posts/{post.id}")
