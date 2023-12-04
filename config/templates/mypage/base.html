@@ -1,0 +1,113 @@
+<!-- 모든 templates의 부모가 되는 html 파일 -->
+<!-- header / sidebar / footer가 모든 templates에 존재하기 때문에 코드의 중복을 제거하기 위해 block, extends 이용 -->
+<!-- block에 해당하는 부분에 자식의 정보들이 들어감 -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+
+  <head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <!-- 아이콘 사용 -->
+    <script src="https://kit.fontawesome.com/9ef1e52ac8.js" crossorigin="anonymous"></script>
+
+    <!-- static 폴더내에 존재하는 default.css 파일 사용 -->
+    <link rel="stylesheet" href="{% static 'css/default.css' %}"/>
+
+    <!-- nav-bar 토글 사용을 위한 JS코드 사용 -->
+    <script src="{% static 'js/main.js' %}" defer="defer"></script>
+
+    <title>web.yonsei</title>
+
+    <!-- favicon 사용-->
+    <link rel="icon" href="{% static 'image/favicon.ico' %}" type="image/x-icon">
+
+  </head>
+
+  <body>
+    <div class="container">
+      <!-- 헤더 -->
+      <div class="header">
+        <div class="head-logo">
+          <a href="/">
+            <i class="fa-solid fa-code"></i>
+            web.yonsei</a>
+        </div>
+        <ul class="head-menu">
+          <li>
+            <a href="/">HOME</a>
+          </li>
+          <li>
+            <a href="/about">ABOUT</a>
+          </li>
+          <li>
+            <a target="_blank" href="mailto:example@yonsei.ac.kr?subject=contact e-mail">CONTACT</a>
+          </li>
+        </ul>
+        <ul class="head-link">
+          <li>
+            <a href="https://www.instagram.com" target="_blank">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+          </li>
+          <li>
+            <a href="https://www.github.com" target="_blank">
+              <i class="fa-brands fa-github"></i>
+            </a>
+          </li>
+          <li>
+            {% if user.is_active %}
+              <a href="/logout">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Logout</a>
+            {% else %}
+              <a href="/login">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i>
+                Login</a>
+            {% endif %}
+          </li>
+        </ul>
+
+        <!-- 1024px 미만의 경우 카테고리 목록이 nav-bar로 들어감 -->
+        <div class="nav-sidebar">
+          <div onclick="location.href='/';" class="nav-category-box">ALL</div>
+          {% for category in categorys %}
+            <div onclick="location.href='/category/{{ category.cate_name | lower}}/';" class="nav-category-box">
+              {{ category.cate_name }}
+            </div>
+          {% endfor %}
+        </div>
+        <a href="#" class="navbar_toggleBtn">
+          <i class="fa-solid fa-bars"></i>
+        </a>
+      </div>
+
+      {% block index %}{% endblock %}
+      {% block category %}{% endblock %}
+      {% block detail %}{% endblock %}
+      {% block write %}{% endblock %}
+      {% block about %}{% endblock %}
+      {% block login %}{% endblock %}
+      {% block modify %}{% endblock %}
+      {% block category_option %}{% endblock %}
+      {% block category_modify %}{% endblock %}
+
+      <!-- 하단바 공간 -->
+      <div class="footer">
+        <div class="head-title">
+          <i class="fa-solid fa-code"></i>
+          <a href="/">web.yonsei</a>
+        </div>
+        <p class="copyright">ⓒ 2023 Yonsei univ. All rights reserved</p>
+      </div>
+
+      <!-- 클릭시 맨 위로 이동 -->
+      <button class="go-first" onclick="window.scrollTo(0,0);">
+        <i class="fa-solid fa-chevron-up"></i>
+      </button>
+    </div>
+  </body>
+
+</html>

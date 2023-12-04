@@ -1,0 +1,33 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block category_option %}
+
+  <!-- static 폴더내에 존재하는 category_option.css 파일 사용 -->
+  <link rel="stylesheet" href="{% static 'css/category_option.css' %}"/>
+
+  <div class="description">카테고리 관리</div>
+
+  <!-- 새로운 카테고리 추가 -->
+  <form method="POST" class="add-category">
+    {% csrf_token %}
+    <input type="text" name="cate_name" placeholder="카테고리명" required="required"/>
+    <button type="submit" onclick="return confirm('새로운 카테고리를 추가하시겠습니까?');">
+      추가
+    </button>
+  </form>
+
+  <!-- 카테고리 수정 및 삭제 -->
+  {% for category in categorys %}
+    <div class="category-box">
+      <div>{{ category.cate_name }}</div>
+      <div>
+        <a href="/option/modify/{{category.id}}" class="modify">
+          <i class="fa-solid fa-pen"></i>
+        </a>
+        <a href="/option/delete/{{category.id}}" class="delete" onclick="return confirm('해당 카테고리를 삭제하시겠습니까?');">
+          <i class="fa-solid fa-trash-can"></i>
+        </a>
+      </div>
+    </div>
+  {% endfor %}
+{% endblock %}

@@ -1,0 +1,19 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block category_modify %}
+
+  <!-- static 폴더내에 존재하는 category_option.css 파일 사용 -->
+  <link rel="stylesheet" href="{% static 'css/category_option.css' %}"/>
+
+  <div class="description">카테고리명 변경</div>
+
+  <!-- 새로운 카테고리 추가 -->
+  <form method="POST" class="add-category">
+    {% csrf_token %}
+    <input type="text" name="cate_name" placeholder="카테고리명" value='{{ category.cate_name }}' required="required"/>
+    <button type="submit" onclick="return confirm('카테고리명을 변경하시겠습니까?');">
+      변경
+    </button>
+  </form>
+
+{% endblock %}

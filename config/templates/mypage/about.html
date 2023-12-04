@@ -1,0 +1,13 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block login %}
+
+  <!-- static 폴더내에 존재하는 about.css 파일 사용 -->
+  <link rel="stylesheet" href="{% static 'css/about.css' %}"/>
+
+  <div class="description">
+    <i class="fa-solid fa-hammer"></i>
+    <p>페이지 제작중</p>
+    <i class="fa-solid fa-wrench"></i>
+  </div>
+{% endblock %}

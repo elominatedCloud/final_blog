@@ -1,0 +1,142 @@
+@import url("https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Nanum+Gothic:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rubik&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@200;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Kanit:wght@200&display=swap");
+
+/* PC version CSS */
+body {
+  margin: 0;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #e7e7e767;
+  padding: 8px 12px;
+  box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.07);
+}
+.header a {
+  font-family: "Chakra Petch", sans-serif;
+  font-size: 18px;
+  transition: 0.5s;
+  color: black;
+}
+.header a:hover {
+  color: #4169e1;
+}
+.head-menu {
+  display: flex;
+  list-style: none;
+  padding-left: 0;
+}
+.head-menu li {
+  padding: 8px 12px;
+}
+.head-link {
+  list-style: none;
+  padding-left: 0;
+  display: flex;
+}
+.head-link li {
+  padding: 8px 12px;
+}
+.navbar_toggleBtn {
+  display: none;
+  position: absolute;
+  right: 32px;
+  font-size: 24px;
+}
+.nav-sidebar {
+  display: none;
+  width: 100%;
+}
+.nav-category-box {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.07);
+  height: 50px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-family: "Nanum Gothic", sans-serif;
+  color: black;
+  transition: 0.5s;
+}
+.nav-category-box:hover {
+  color: #4169e1;
+}
+.footer {
+  width: 100%;
+  height: 100px;
+  margin-top: 50px;
+  background-color: #e7e7e767;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+.head-title {
+  font-family: "Chakra Petch", sans-serif;
+}
+.copyright {
+  font-family: "IBM Plex Sans KR", sans-serif;
+  font-weight: 200;
+  margin: 0;
+  font-size: 12px;
+}
+.go-first {
+  width: 50px;
+  height: 50px;
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  border-radius: 100%;
+  background-color: #f1f3f5;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.3);
+  border: none;
+  cursor: pointer;
+  transition: 0.5s;
+}
+.go-first:hover {
+  background-color: #4169e1;
+  color: white;
+}
+/* Tablet and Mobile version CSS */
+@media screen and (max-width: 1023px) {
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .head-menu {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+  }
+  .head-menu li {
+    width: 100%;
+    text-align: center;
+  }
+  .head-link {
+    display: none;
+    justify-content: center;
+    width: 100%;
+  }
+  .navbar_toggleBtn {
+    display: block;
+  }
+  .head-menu.active,
+  .head-link.active,
+  .nav-sidebar.active {
+    display: flex;
+  }
+  .content {
+    width: 90%;
+  }
+}

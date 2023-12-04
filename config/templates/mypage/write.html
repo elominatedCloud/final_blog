@@ -1,0 +1,37 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block write %}
+
+  <!-- static 폴더내에 존재하는 write.css 파일 사용 -->
+  <link rel="stylesheet" href="{% static 'css/write.css' %}"/>
+
+  <!-- 게시글 작성 박스 -->
+  <form method="POST" enctype="multipart/form-data" class="post-box">
+    {% csrf_token %}
+
+    <!-- 작성 버튼 공간 -->
+    <div class="button-box">
+      <div></div>
+      <div>새로운 게시글 작성하기</div>
+      <button type="submit" class="write-button" onclick="return confirm('게시글을 작성하시겠습니까?');">글쓰기</button>
+    </div>
+
+    <!-- 제목 / 설명 / 내용 -->
+    <input type="text" name="title" placeholder="게시글 제목" required="required"/>
+    <input type="text" name="description" placeholder="게시글 설명 • 게시글에 대한 간단한 요약" required="required"/>
+    <textarea name="content" cols="50" rows="10" placeholder="내용을 입력해주세요."></textarea>
+
+    <!-- 카테고리 선택 -->
+    <label for="category" style="height: 50px">카테고리
+      <select name="categorys" id="category">
+        {% for cate in categorys %}
+          <option value="{{ cate.id }}">{{ cate.cate_name }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <!-- 썸네일 -->
+    <label>썸네일
+      <input name="thumbnail" type="file"/></label>
+  </form>
+{% endblock %}

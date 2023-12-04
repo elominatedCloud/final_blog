@@ -1,0 +1,94 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block detail %}
+
+  <!-- static 폴더내에 존재하는 detail.css 파일 사용 -->
+  <link rel="stylesheet" href="{% static 'css/detail.css' %}"/>
+
+  <!-- 게시글 상세 내용 -->
+  <div class="content">
+    <!-- 썸네일 및 날짜 / 내용 -->
+    <div class="content-text">
+      <!-- 썸네일 -->
+      <div class="thumbnail">
+        {% if post.thumbnail %}
+          <img src="{{post.thumbnail.url}}"/>
+        {% endif %}
+      </div>
+      <!-- 게시글 제목 -->
+      <div class="title">{{post.p_title}}</div>
+      <!-- 게시글 설명 -->
+      <div class="description">{{post.p_desc}}</div>
+      <!-- 게시글 게시 및 수정 날짜 -->
+      <div class="date">
+        {{post.p_created | date:'Y.m.d H:m'}}
+        ・ UPDATED
+        {{post.p_updated|date:'Y.m.d H:m'}}
+        ・
+        {{post.category_title}}
+      </div>
+      <!-- 게시글 내용 -->
+      <div class="post-detail">
+        <p>{{post.p_contents | linebreaksbr }}</p>
+      </div>
+    </div>
+
+    <!-- 수정 / 삭제 버튼 -->
+    {% if user.is_active %}
+      <div class="button-box">
+        <a href="/modify/{{post.id}}" class="modify">
+          <i class="fa-solid fa-file-pen"></i>
+          수정하기</a>
+
+        <!-- 삭제는 따로 html 파일을 제작하지 않고 팝업창으로 확인 -->
+        <a href="/delete/{{post.id}}" class="delete" onclick="return confirm('정말 삭제하시겠습니까?');">
+          <i class="fa-solid fa-trash-can"></i>
+          삭제하기</a>
+      </div>
+    {% endif %}
+
+    <!-- 댓글 작성 -->
+    <div class="comment-box">
+      <div class="comment-text">댓글</div>
+
+      <!-- 댓글 입력 박스 -->
+      <form method="POST" class="comment-input">
+        {% csrf_token %}
+
+        <!-- 아이디 / 비밀번호 입력 -->
+        <div class="input-info">
+          <input type="text" name="comment_id" placeholder="아이디" style="outline: none" required="required"/>
+          <input type="password" name="comment_pw" placeholder="비밀번호" style="outline: none" required="required"/>
+        </div>
+
+        <!-- 댓글 내용 / 버튼 -->
+        <div class="input-comment">
+          <textarea name="comment" placeholder="댓글을 입력해주세요." style="outline: none" required="required"></textarea>
+          <button type="submit">댓글<br/>작성</button>
+        </div>
+      </form>
+
+      <!-- 댓글 확인 박스 -->
+      <ul class="comments">
+        {% for comment in post.comments_set.all %}
+          <li class="comment">
+            <div style="width: 10%; font-weight: 200">
+              {{comment.c_user_id}}
+            </div>
+            <div style="width: 70%">{{ comment.c_contents }}</div>
+            <div style="width: 20%; font-weight: 200; text-align: end">
+              {{comment.c_updated | date:'m.d H:m' }}
+              <a href="/comment/{{comment.id}}">
+                <i class="fa-regular fa-rectangle-xmark"></i>
+              </a>
+            </div>
+          </li>
+
+          <!-- 댓글이 없는 경우 -->
+          {% empty %}
+          <li class="comment-empty">아직 댓글이 없습니다</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endblock %}
