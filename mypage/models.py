@@ -1,9 +1,24 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from django.contrib.auth.models import User
 
 class User(AbstractUser):
-    pass
+    full_name = models.CharField(max_length=255, default="Unknown")
+    email = models.EmailField(default = "anonymous@unknown_mails.com")
+    # 기본적으로 password 필드가 이미 User 모델에 존재합니다. 따라서 추가적인 password 필드는 필요하지 않습니다.
+
+    def __str__(self):
+        return self.username
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255)
+    email = models.EmailField()
+    password = models.CharField(max_length=128)
+
+    def __str__(self):
+        return self.user.username
 
 class Category(models.Model):
     cate_name = models.CharField(max_length=50)

@@ -6,9 +6,9 @@ from django.db.models.functions import Lower
 
 from django.utils import timezone
 from django.contrib.auth import authenticate, login, logout
-from .models import Category
-from .models import Post
-from .models import Comments
+from .models import Category, Post, Comments, UserProfile, User
+from .forms import UserForm
+
 
 # index.html / 메인페이지
 def main(request):
@@ -72,6 +72,21 @@ def logout_view(request):
     logout(request)
 
     return redirect('/')
+
+# 회원가입 구현
+def signup(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)  # 사용자 인증
+            login(request, user)  # 로그인
+            return redirect('/')
+    else:
+        form = UserForm()
+    return render(request, 'mypage/signup.html', {'form': form})
 
 # detail.html / 포스트 상세 페이지
 def post_detail(request, post_id):
