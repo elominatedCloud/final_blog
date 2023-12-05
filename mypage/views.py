@@ -6,8 +6,13 @@ from django.db.models.functions import Lower
 
 from django.utils import timezone
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from .models import Category, Post, Comments, UserProfile, User
 from .forms import UserForm
+
+from django.contrib.auth.hashers import check_password
+from django.shortcuts import render, redirect
+from django.contrib import messages
 
 
 # index.html / 메인페이지
@@ -99,16 +104,27 @@ def post_detail(request, post_id):
     if request.method == "POST":
         # detail.html에 있는 input의 name값을 기반으로 value를 가져옴
         comment_content = request.POST["comment"]
-        comment_id = request.POST["comment_id"]
-        comment_pw = request.POST["comment_pw"]
+        comment_user_id = ''
+        # comment_id = request.POST["comment_id"]
+        # comment_pw = request.POST["comment_pw"]
+
+        if request.user.is_authenticated:
+            # 로그인한 사용자의 경우 사용자 이름 사용
+            comment_author = request.user
+        else:
+            # 비로그인 사용자의 경우 '익명'과 IP 주소의 첫 3자리 사용
+            comment_author = '익명({})'.format(request.META.get('REMOTE_ADDR', '')[:3])
+
 
         Comments.objects.create(
+            author=comment_author,  # 댓글 작성자를 저장
             p_id = post_id,
             c_contents = comment_content,
-            c_user_id = comment_id,
-            c_user_pw = comment_pw,
+            # c_user_id = comment_id,
+            # c_user_pw = comment_pw,
             c_created = timezone.now(),
-            c_updated = timezone.now()
+            # c_updated = timezone.now()
+
         )
         
     context = {'post' : post, 'categorys' : categorys}
@@ -189,18 +205,19 @@ def delete_comment(request, comments_id):
     # 해당하는 댓글에 대한 정보만 가져오기 위함
     comment = Comments.objects.get(id=comments_id)
     
-    if request.method == "POST":
-        c_id = request.POST["c_id"]
-        c_pw = request.POST["c_pw"]
+    # comment = get_object_or_404(Comments, id=comments_id)
 
-        # 입력한 아이디와 비밀번호가 등록되어있는 아이디와 비밀번호가 동일한지 확인
-        # 만약 동일하다면 해당 댓글 삭제
-        if c_id == comment.c_user_id and c_pw == comment.c_user_pw:
-            comment.delete()
+    # 로그인한 사용자가 댓글 작성자이거나 스태프, 관리자인지 확인
+    if request.user == comment.author or request.user.is_staff or request.user.is_superuser:
+        # 댓글 삭제
+        comment.delete()
 
         # 댓글을 삭제한 뒤, 댓글이 있었던 포스트로 이동
         return redirect(f"/posts/{comment.p_id}")
-        
+    else:
+        # 권한이 없는 경우 예외 처리 또는 다른 처리
+        return redirect('/')  # 다른 페이지로 리디렉션 또는 권한 없음 메시지 반환
+
     return render(request, 'mypage/comment_delete.html')
 
 def category_option(request):
@@ -236,3 +253,39 @@ def category_modify(request, category_id):
 def about(request):
 
     return render(request, 'mypage/about.html')
+
+# 마이페이지 뷰
+@login_required
+def my(request):
+    if request.method == 'POST':
+        user = request.user
+        user_form = UserForm(request.POST, instance=user)
+        current_password = request.POST.get('current_password')
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+
+        if user_form.is_valid():
+            user_form.save()
+
+        if current_password and new_password and confirm_password:
+            if check_password(current_password, user.password):
+                if new_password == confirm_password:
+                    user.set_password(new_password)
+                    user.save()
+                    messages.success(request, '비밀번호가 변경되었습니다.')
+                else:
+                    messages.error(request, '새 비밀번호와 확인 비밀번호가 일치하지 않습니다.')
+            else:
+                messages.error(request, '현재 비밀번호가 올바르지 않습니다.')
+        
+        return redirect('/')  # 인덱스 페이지로 리디렉션
+    else:
+        user_form = UserForm(instance=request.user)
+
+    context = {
+        'user_form': user_form,
+    }
+    return render(request, 'mypage/my.html', context)
+
+
+
