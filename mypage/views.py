@@ -13,6 +13,7 @@ from .forms import UserForm
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import render, redirect
 from django.contrib import messages
+import datetime
 
 
 # index.html / 메인페이지
@@ -104,20 +105,23 @@ def post_detail(request, post_id):
     if request.method == "POST":
         # detail.html에 있는 input의 name값을 기반으로 value를 가져옴
         comment_content = request.POST["comment"]
-        comment_user_id = ''
+        comment_user_id = 'None'
         # comment_id = request.POST["comment_id"]
         # comment_pw = request.POST["comment_pw"]
 
         if request.user.is_authenticated:
             # 로그인한 사용자의 경우 사용자 이름 사용
             comment_author = request.user
+            anonymous_author = None
         else:
             # 비로그인 사용자의 경우 '익명'과 IP 주소의 첫 3자리 사용
-            comment_author = '익명({})'.format(request.META.get('REMOTE_ADDR', '')[:3])
+            comment_author = None
+            anonymous_author = '익명({})'.format(request.META.get('REMOTE_ADDR', '')[:3])
 
 
         Comments.objects.create(
             author=comment_author,  # 댓글 작성자를 저장
+            anonymous_author=anonymous_author,
             p_id = post_id,
             c_contents = comment_content,
             # c_user_id = comment_id,
@@ -155,7 +159,7 @@ def post_write(request):
             p_title = title,
             p_desc = description,
             p_contents = content,
-            p_created = timezone.now(),
+            p_created = datetime.datetime.now(),
             thumbnail = thumbnail,
             author=request.user  # 현재 로그인한 사용자를 작성자로 설정 # 추가된 부분
         )
@@ -273,12 +277,13 @@ def my(request):
                     user.set_password(new_password)
                     user.save()
                     messages.success(request, '비밀번호가 변경되었습니다.')
+                    return redirect('/')  # 인덱스 페이지로 리디렉션
                 else:
                     messages.error(request, '새 비밀번호와 확인 비밀번호가 일치하지 않습니다.')
             else:
                 messages.error(request, '현재 비밀번호가 올바르지 않습니다.')
         
-        return redirect('/')  # 인덱스 페이지로 리디렉션
+        return redirect('http://127.0.0.1:8000/my')  # 현재 페이지로 리디렉션
     else:
         user_form = UserForm(instance=request.user)
 

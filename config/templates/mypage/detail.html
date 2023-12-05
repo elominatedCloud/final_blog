@@ -81,11 +81,15 @@
       <li class="comment">
         <div style="width: 10%; font-weight: 200">
           <!-- 디버깅 목적으로 댓글 작성자와 현재 사용자 출력 -->
-          {{comment.author}}
+          {% if comment.author %}
+            {{ comment.author }}
+          {% else %}
+            {{ comment.anonymous_author }}
+          {% endif %}
         </div>
         <div style="width: 70%">{{ comment.c_contents }}</div>
         <div style="width: 20%; font-weight: 200; text-align: end">
-          {{comment.c_updated | date:'m.d H:m' }}
+          {{comment.c_updated | date:'m.d H:i' }}
           <!-- 관리자, 스태프, 댓글 작성자에게만 삭제 링크 표시 -->
           {% if request.user == comment.author or request.user.is_staff or request.user.is_superuser %}
           <a href="/comment/{{comment.id}}">
