@@ -1,0 +1,33 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block my %}
+<!-- static 폴더내에 존재하는 index.css 파일 사용 -->
+<link rel="stylesheet" href="{% static 'css/my.css' %}" />
+
+<div class="mypage-container">
+  <div class="mypage-box">
+    <h2 class="mypage-title">My Profile</h2>
+    <form method="POST" class="mypage-form" id="profileForm">
+      {% csrf_token %}
+      <div class="mypage-inputs">
+        <input type="text" name="username" placeholder="이름" value="{{ user.username }}" required>
+        <input type="email" name="email" placeholder="이메일" value="{{ user.email }}" required>
+        <input type="password" id="current_password" name="current_password" placeholder="현재 비밀번호">
+        <input type="password" id="new_password" name="new_password" placeholder="새로운 비밀번호">
+        <input type="password" id="confirm_password" name="confirm_password" placeholder="비밀번호 확인">
+        <p id="passwordHelp" class="form-text-error"></p>
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li{% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      <div class="mypage-actions">
+        <button type="submit" class="mypage-button">변경하기</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

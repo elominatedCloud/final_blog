@@ -59,10 +59,13 @@
     <form method="POST" class="comment-input">
       {% csrf_token %}
 
-      <!-- 아이디 / 비밀번호 입력 -->
+      <!-- 로그인한 사용자와 비로그인 사용자 구분 -->
       <div class="input-info">
-        <input type="text" name="comment_id" placeholder="아이디" style="outline: none" required="required" />
-        <input type="password" name="comment_pw" placeholder="비밀번호" style="outline: none" required="required" />
+        {% if user.is_authenticated %}
+        <span class="user-label">{{ user.username }}</span>
+        {% else %}
+        <span class="anonymous-label">익명</span>
+        {% endif %}
       </div>
 
       <!-- 댓글 내용 / 버튼 -->
@@ -77,14 +80,22 @@
       {% for comment in post.comments_set.all %}
       <li class="comment">
         <div style="width: 10%; font-weight: 200">
-          {{comment.c_user_id}}
+          <!-- 디버깅 목적으로 댓글 작성자와 현재 사용자 출력 -->
+          {% if comment.author %}
+            {{ comment.author }}
+          {% else %}
+            {{ comment.anonymous_author }}
+          {% endif %}
         </div>
         <div style="width: 70%">{{ comment.c_contents }}</div>
         <div style="width: 20%; font-weight: 200; text-align: end">
-          {{comment.c_updated | date:'m.d H:m' }}
+          {{comment.c_updated | date:'m.d H:i' }}
+          <!-- 관리자, 스태프, 댓글 작성자에게만 삭제 링크 표시 -->
+          {% if request.user == comment.author or request.user.is_staff or request.user.is_superuser %}
           <a href="/comment/{{comment.id}}">
             <i class="fa-regular fa-rectangle-xmark"></i>
           </a>
+          {% endif %}
         </div>
       </li>
 

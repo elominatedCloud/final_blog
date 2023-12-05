@@ -45,6 +45,11 @@
           <li>
             <a target="_blank" href="mailto:example@yonsei.ac.kr?subject=contact e-mail">CONTACT</a>
           </li>
+          {% if user.is_active %}
+          <li>
+            <a href="/my">MY</a>
+          </li>
+          {% endif %}
         </ul>
         <ul class="head-link">
           <li>
@@ -89,6 +94,7 @@
       {% block detail %}{% endblock %}
       {% block write %}{% endblock %}
       {% block about %}{% endblock %}
+      {% block my %}{% endblock %}
       {% block login %}{% endblock %}
       {% block signup %}{% endblock %}
       {% block modify %}{% endblock %}

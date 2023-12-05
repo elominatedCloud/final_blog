@@ -42,6 +42,7 @@ class Post(models.Model):
 class Comments(models.Model):
     p = models.ForeignKey(Post, on_delete=models.CASCADE, null=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    anonymous_author = models.CharField(max_length=100, null=True, blank=True)
     c_user_id = models.CharField(max_length=20)
     c_user_pw = models.CharField(max_length=20)
     c_contents = models.TextField()
